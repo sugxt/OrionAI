@@ -1,0 +1,25 @@
+html {
+  background-color: #030012;
+  text-align: center;
+  color: white;
+}
+
+body {
+  margin: 0;
+  color: white;
+  font-family: "Inter", sans-serif;
+}
+
+@font-face {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-weight: 400;
+  src: local(""),
+    url("assets/fonts/Inter-VariableFont_opsz\,wght.ttf") format("tff");
+}
+
+#app {
+  height: 100vh;
+  text-align: center;
+}
