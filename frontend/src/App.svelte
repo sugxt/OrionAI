@@ -1,8 +1,7 @@
 <script lang="ts">
-  import logo from "./assets/images/logo-universal.png";
   import TopBar from "./components/TopBar.svelte";
   import { onMount } from "svelte";
-  import { loadConfig, saveConfig } from "./libs/config";
+  import { loadConfig } from "./libs/config";
   import { AskOllama } from "../wailsjs/go/api/App";
 
   let name: string = "";
@@ -63,6 +62,7 @@
 
 <style>
   .chat-box {
+    margin-top: 30px;
     color: black;
     width: 80%;
     max-height: 300px;
