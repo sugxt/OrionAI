@@ -6,8 +6,8 @@ export function AskOllama(arg1) {
   return window['go']['api']['App']['AskOllama'](arg1);
 }
 
-export function CopyToClipboard(arg1) {
-  return window['go']['api']['App']['CopyToClipboard'](arg1);
+export function CheckDependencies() {
+  return window['go']['api']['App']['CheckDependencies']();
 }
 
 export function LoadConfig() {

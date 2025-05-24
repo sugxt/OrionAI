@@ -3,7 +3,6 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -61,7 +60,7 @@ func IsOllamaRunning() bool {
 }
 
 func (a *App) AskOllama(prompt string) (string, error) {
-	fullPrompt := strings.Join(GetPastConversation(conversationHistory), "\n") + "\n" + PrePrompt("code") + "\nUser: " + "prompt = " + prompt + "\nAssistant:"
+	fullPrompt := strings.Join(GetPastConversation(conversationHistory), "\n") + "\n" + PrePrompt("general") + "\nUser: " + "prompt = " + prompt + "\nAssistant:"
 	response, err := QueryOllama(fullPrompt)
 	if err == nil {
 		SaveLastInteraction(prompt, response)
@@ -85,7 +84,7 @@ func PrePrompt(activity string) string {
 
 func GetPastConversation(pastConvo []string) []string {
 	// Limit to last 10 messages to stay within token limit
-	//TODO: Make the last 10 conversations persist by saving it inside a prompt file
+	//TODO: Make the last 10 messages persist by saving it inside a prompt file
 	if len(pastConvo) > 10 {
 		return pastConvo[len(pastConvo)-10:]
 	}
@@ -94,9 +93,4 @@ func GetPastConversation(pastConvo []string) []string {
 
 func SaveLastInteraction(prompt, response string) {
 	conversationHistory = append(conversationHistory, "User: "+prompt, "Assistant: "+response)
-}
-
-func (a *App) CopyToClipboard(content string) string {
-	// You could integrate github.com/atotto/clipboard here
-	return fmt.Sprintf("Copied %s", content)
 }

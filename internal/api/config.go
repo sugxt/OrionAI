@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type App struct {
@@ -15,17 +17,20 @@ type App struct {
 
 func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
+	var isReady = a.CheckDependencies()
+	if isReady {
+		runtime.LogError(a.ctx, "Dependencies Installed")
+	}
+	// Optionally start Ollama here:
+	err := a.StartOllamaModel()
+	if err != nil {
+		runtime.LogErrorf(a.ctx, "Failed to start Ollama:")
+	}
 }
 
 // NewApp is called at app start
 func NewApp() *App {
 	app := &App{}
-
-	// Optionally start Ollama here:
-	err := app.StartOllamaModel()
-	if err != nil {
-		println("Failed to start Ollama:", err.Error())
-	}
 
 	return app
 }
