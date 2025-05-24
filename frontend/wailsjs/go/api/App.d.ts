@@ -4,7 +4,7 @@ import {context} from '../models';
 
 export function AskOllama(arg1:string):Promise<string>;
 
-export function CopyToClipboard(arg1:string):Promise<string>;
+export function CheckDependencies():Promise<boolean>;
 
 export function LoadConfig():Promise<string>;
 
