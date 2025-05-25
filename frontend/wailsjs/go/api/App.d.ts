@@ -6,12 +6,8 @@ export function AskOllama(arg1:string):Promise<string>;
 
 export function CheckDependencies():Promise<boolean>;
 
-export function LoadConfig():Promise<string>;
-
-export function SaveConfig(arg1:string):Promise<void>;
+export function SaveConfig(arg1:Array<number>):Promise<void>;
 
 export function Shutdown(arg1:context.Context):Promise<void>;
 
 export function StartOllamaModel():Promise<void>;
-
-export function Testing():Promise<void>;

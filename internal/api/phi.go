@@ -3,10 +3,13 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type OllamaRequest struct {
@@ -20,7 +23,7 @@ type OllamaResponse struct {
 
 var conversationHistory []string
 
-func QueryOllama(prompt string) (string, error) {
+func QueryOllama(prompt string, isExec bool) (string, error) {
 	body := map[string]interface{}{
 		"model":  "phi3",
 		"prompt": prompt,
@@ -44,6 +47,10 @@ func QueryOllama(prompt string) (string, error) {
 		return "", err
 	}
 
+	if isExec {
+		TaskExecution(result.Response)
+	}
+
 	return result.Response, nil
 }
 
@@ -60,8 +67,9 @@ func IsOllamaRunning() bool {
 }
 
 func (a *App) AskOllama(prompt string) (string, error) {
-	fullPrompt := strings.Join(GetPastConversation(conversationHistory), "\n") + "\n" + PrePrompt("general") + "\nUser: " + "prompt = " + prompt + "\nAssistant:"
-	response, err := QueryOllama(fullPrompt)
+	fullPrompt := strings.Join(GetPastConversation(conversationHistory), "\n") + "\n" + PrePrompt("general") + "\nUser: " + "new prompt = " + prompt + "\nAssistant:"
+	runtime.LogPrintf(a.ctx, fullPrompt)
+	response, err := QueryOllama(fullPrompt, false)
 	if err == nil {
 		SaveLastInteraction(prompt, response)
 	}
@@ -69,12 +77,15 @@ func (a *App) AskOllama(prompt string) (string, error) {
 }
 
 func PrePrompt(activity string) string {
-	var initialPrompt = "This is pre-prompt to structure your responses, DO NOT mention any of the contexts the actual prompt starts from the 'prompt =' part. The past responses of the user will be provided so keep it in context"
+	userDetails := GetUserDetails()
+	var initialPrompt = "This is pre-prompt to structure your responses,DO NOT mention any of the contexts the actual prompt starts from the 'new prompt =' part, ONLY  reply to the last prompt. The past responses of the user will be provided so keep it in context. Keep the answers fairly short. DO NOT mention anything about the chat history that is provided before the prompt \n These are the user details, you can greet the user to make it more personalized: " + userDetails
 	switch activity {
 	case "code":
 		return initialPrompt + `You are a coding assistant. Respond with code when asked and explain briefly.`
 	case "alarm":
 		return initialPrompt + `You are a time management assistant. Respond with commands to set alarms or reminders.`
+	case "tasks":
+		return initialPrompt + `You are a task execution assistaant. I will provide a list of tasks and you are ONLY to return the keyword of what category the task execution lies in. Here are the categories = \n "code","browser","alarm","reboot","shutdown"`
 	case "general":
 		fallthrough
 	default:
@@ -89,6 +100,11 @@ func GetPastConversation(pastConvo []string) []string {
 		return pastConvo[len(pastConvo)-10:]
 	}
 	return pastConvo
+}
+
+func TaskExecution(taskType string) (isExecuted bool) {
+	fmt.Sprintln(taskType)
+	return false
 }
 
 func SaveLastInteraction(prompt, response string) {

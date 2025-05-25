@@ -10,10 +10,6 @@ export function CheckDependencies() {
   return window['go']['api']['App']['CheckDependencies']();
 }
 
-export function LoadConfig() {
-  return window['go']['api']['App']['LoadConfig']();
-}
-
 export function SaveConfig(arg1) {
   return window['go']['api']['App']['SaveConfig'](arg1);
 }
@@ -24,8 +20,4 @@ export function Shutdown(arg1) {
 
 export function StartOllamaModel() {
   return window['go']['api']['App']['StartOllamaModel']();
-}
-
-export function Testing() {
-  return window['go']['api']['App']['Testing']();
 }

@@ -1,16 +1,11 @@
 <script lang="ts">
   import TopBar from "./components/TopBar.svelte";
-  import { onMount } from "svelte";
-  import { loadConfig } from "./libs/config";
   import { AskOllama } from "../wailsjs/go/api/App";
   let name: string = "";
   let chatHistory: { user: string; bot: string }[] = [];
   let isLoading: boolean = false;
+  let isStart: boolean = false;
   let wails = window.runtime;
-  onMount(async () => {
-    const loaded = await loadConfig();
-    wails.LogPrint(loaded.theme);
-  });
   async function sendPrompt() {
     if (!name.trim()) return;
 
