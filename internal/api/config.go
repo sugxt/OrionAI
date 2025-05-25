@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -26,9 +25,8 @@ func (a *App) Startup(ctx context.Context) {
 	if err != nil {
 		runtime.LogErrorf(a.ctx, "Failed to start Ollama:")
 	}
+	GetUserDetails()
 }
-
-// NewApp is called at app start
 func NewApp() *App {
 	app := &App{}
 
@@ -50,22 +48,16 @@ func (a *App) StartOllamaModel() error {
 	return nil
 }
 
-func (a *App) Testing() {
-	fmt.Println("Test Sucess")
-}
-
-// SaveConfig saves a JSON string to a config file
-func (a *App) SaveConfig(data string) error {
+func (a *App) SaveConfig(data []byte) error {
 	path, err := getConfigPath()
 	if err != nil {
 		return err
 	}
 
-	return os.WriteFile(path, []byte(data), 0644)
+	return os.WriteFile(path, data, 0644)
 }
 
-// LoadConfig loads a JSON config from disk
-func (a *App) LoadConfig() (string, error) {
+func LoadConfig() (string, error) {
 	path, err := getConfigPath()
 	if err != nil {
 		return "", err
@@ -73,7 +65,6 @@ func (a *App) LoadConfig() (string, error) {
 
 	content, err := os.ReadFile(path)
 	if err != nil {
-		// If file doesn't exist, return empty string
 		if os.IsNotExist(err) {
 			return "", nil
 		}
@@ -83,7 +74,6 @@ func (a *App) LoadConfig() (string, error) {
 	return string(content), nil
 }
 
-// Shutdown is called automatically by Wails when the app exits
 func (a *App) Shutdown(ctx context.Context) {
 	if a.ollamaCmd != nil && a.ollamaCmd.Process != nil {
 		_ = a.ollamaCmd.Process.Kill()
@@ -108,4 +98,14 @@ func getConfigPath() (string, error) {
 
 	// Final path: ~/.config/clipr/config.json
 	return filepath.Join(cliprDir, "config.json"), nil
+}
+
+func GetUserDetails() (userInfo string) {
+	//TODO: Read the config file of the user and send it to the PrePrompt Function to Append Before Querying the Model
+	userDetails, err := LoadConfig()
+	if err != nil {
+		return "No User Data"
+	}
+	// runtime.LogPrint(a.ctx, userDetails)
+	return userDetails
 }
