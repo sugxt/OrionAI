@@ -1,16 +1,34 @@
-# README
+# OrionAI — AI Desktop Assistant & Chatbot
 
-## About
+Clipr is a cross-platform desktop assistant and chatbot powered by **Go**, **Svelte**, and **Wails**. It integrates the lightweight **Phi-3 Mini** model to provide fast, local AI responses and assistant functionalities.
 
-This is the official Wails Svelte-TS template.
+Go is used to handle **prompt engineering**, **file handling**, and **system-level commands**, while **Svelte** ensures a reactive, efficient, and beautiful GUI. Wails bridges the frontend and backend, compiling everything into a native desktop application.
 
-## Live Development
+---
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+## ⚙️ Technologies Used
 
-## Building
+- **Go** – Core logic, file I/O, and system integration
+- **Svelte** – Lightweight and reactive frontend framework
+- **Wails** – Native desktop app framework connecting Go and Svelte
+- **Phi-3 Mini** – Embedded AI language model for chatbot responses
 
-To build a redistributable, production mode package, use `wails build`.
+---
+
+## ✅ Features
+
+- 🔌 **Prompt Engineering Backend** – Handled in Go for flexible and safe local AI interactions
+- 💬 **Chatbot Interface** – Converse with Phi-3 Mini directly from your desktop
+- 💾 **Persistent Configuration** – Save and load user settings using JSON
+- 🗂️ **Cross-Platform File Handling** – Automatic path detection for config storage (Linux & Windows)
+- 🎨 **Transparent UI with Blur** – Native blur effects using Wails + Svelte
+- 🧰 **System Command Execution** – Control and interact with your OS through chat commands
+
+---
+
+## 📦 Installation
+
+```bash
+git clone https://github.com/yourusername/clipr
+cd clipr
+wails dev
