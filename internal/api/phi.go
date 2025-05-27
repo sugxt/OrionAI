@@ -23,6 +23,8 @@ type OllamaResponse struct {
 
 var conversationHistory []string
 
+var modeChange bool
+
 func QueryOllama(prompt string, isExec bool) (string, error) {
 	body := map[string]interface{}{
 		"model":  "phi3",
@@ -66,8 +68,8 @@ func IsOllamaRunning() bool {
 	return resp.StatusCode == http.StatusOK
 }
 
-func (a *App) AskOllama(prompt string) (string, error) {
-	fullPrompt := strings.Join(GetPastConversation(conversationHistory), "\n") + "\n" + PrePrompt("general") + "\nUser: " + "new prompt = " + prompt + "\nAssistant:"
+func (a *App) AskOllama(prompt string, mode string) (string, error) {
+	fullPrompt := strings.Join(GetPastConversation(conversationHistory), "\n") + "\n" + a.PrePrompt(mode) + "\nUser: " + "new prompt = " + prompt + "\nAssistant:"
 	runtime.LogPrintf(a.ctx, fullPrompt)
 	response, err := QueryOllama(fullPrompt, false)
 	if err == nil {
@@ -76,8 +78,8 @@ func (a *App) AskOllama(prompt string) (string, error) {
 	return response, err
 }
 
-func PrePrompt(activity string) string {
-	userDetails := GetUserDetails()
+func (a *App) PrePrompt(activity string) string {
+	userDetails := a.GetUserDetails()
 	var initialPrompt = "This is pre-prompt to structure your responses,DO NOT mention any of the contexts the actual prompt starts from the 'new prompt =' part, ONLY  reply to the last prompt. The past responses of the user will be provided so keep it in context. Keep the answers fairly short. DO NOT mention anything about the chat history that is provided before the prompt \n These are the user details, you can greet the user to make it more personalized: " + userDetails
 	switch activity {
 	case "code":
@@ -94,8 +96,7 @@ func PrePrompt(activity string) string {
 }
 
 func GetPastConversation(pastConvo []string) []string {
-	// Limit to last 10 messages to stay within token limit
-	//TODO: Make the last 10 messages persist by saving it inside a prompt file
+	//TODO: Check if there has been a change in 'activity', if so then just reset the past conversation so the bot doesnt tweak tf out
 	if len(pastConvo) > 10 {
 		return pastConvo[len(pastConvo)-10:]
 	}
@@ -103,6 +104,7 @@ func GetPastConversation(pastConvo []string) []string {
 }
 
 func TaskExecution(taskType string) (isExecuted bool) {
+	//TODO: Execute System Tasks Based on The Response of the Bot
 	fmt.Sprintln(taskType)
 	return false
 }

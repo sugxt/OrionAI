@@ -13,7 +13,6 @@ func CheckFunction() {
 }
 
 func (a *App) CheckDependencies() (isReady bool) {
-	// Check if Ollama is installed by trying to get its version
 	cmd := exec.Command("ollama", "--version")
 	err := cmd.Run()
 	if err != nil {
