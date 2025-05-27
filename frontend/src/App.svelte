@@ -1,23 +1,54 @@
 <script lang="ts">
   import TopBar from "./components/TopBar.svelte";
+  import UserConfig from "./components/UserConfig.svelte";
+  import { LoadConfig, DeleteConfig } from "../wailsjs/go/api/App";
   import { AskOllama } from "../wailsjs/go/api/App";
-  let name: string = "";
+  import { onMount } from "svelte";
+  let message: string = "";
+  let isConfigWindow = false;
   let chatHistory: { user: string; bot: string }[] = [];
   let isLoading: boolean = false;
-  let isStart: boolean = false;
   let wails = window.runtime;
-  async function sendPrompt() {
-    if (!name.trim()) return;
 
-    const userMessage = name.trim();
+  let currentMode = "";
+
+  const modes = [
+    {
+      name: "General",
+      mode: "general",
+    },
+    {
+      name: "Tasks",
+      mode: "tasks",
+    },
+  ];
+
+  onMount(() => {
+    const getDetails = async () => {
+      const res = await LoadConfig();
+      // wails.LogPrint(res);
+      if (res == "") {
+        isConfigWindow = true;
+      }
+    };
+    getDetails();
+  });
+
+  async function sendPrompt() {
+    if (!message.trim()) return;
+
+    const userMessage = message.trim();
     isLoading = true;
-    name = ""; // Clear input immediately
+    message = ""; // Clear input immediately
 
     // Add user message to chat
     chatHistory = [...chatHistory, { user: userMessage, bot: "" }];
 
     wails.LogPrint(userMessage);
-    const res = await AskOllama(userMessage);
+    if (currentMode == "") {
+      currentMode = "general";
+    }
+    const res = await AskOllama(userMessage, currentMode);
     isLoading = false;
 
     if (res) {
@@ -27,6 +58,7 @@
       chatHistory = [...chatHistory]; // Trigger reactivity
     }
   }
+
   function quit(timer: number): void {
     setInterval(() => {
       wails.Quit();
@@ -36,6 +68,9 @@
 
 <main>
   <TopBar />
+  {#if isConfigWindow}
+    <UserConfig />
+  {/if}
   <div class="chat-container">
     <div class="chat-box">
       {#each chatHistory as chat, index}
@@ -84,11 +119,26 @@
   </div>
 
   <div class="input-container">
+    <div class="mode-select">
+      {#each modes as mode}
+        <div class="mode-details">
+          <button
+            class="{mode.mode == currentMode ? 'active':''}"
+            on:click={() => {
+              currentMode = ""
+              currentMode = mode.mode;
+              wails.LogPrint(currentMode)
+            }}
+            >{mode.name}
+          </button>
+        </div>
+      {/each}
+    </div>
     <div class="input-box">
       <input
         placeholder="Type your message..."
         autocomplete="off"
-        bind:value={name}
+        bind:value={message}
         class="input"
         type="text"
         disabled={isLoading}
@@ -99,7 +149,7 @@
       <button
         class="send-btn"
         on:click={sendPrompt}
-        disabled={isLoading || !name.trim()}
+        disabled={isLoading || !message.trim()}
         class:loading={isLoading}
       >
         {#if isLoading}
@@ -140,12 +190,24 @@
   :global(body) {
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      Ubuntu, Cantarell, sans-serif;
+    font-family: Poppins, "sans-serif";
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
   }
-
+  .mode-select {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .mode-select button {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+  }
   main {
     display: flex;
     flex-direction: column;
@@ -287,6 +349,11 @@
 
   .typing-dot:nth-child(2) {
     animation-delay: -0.16s;
+  }
+
+  .mode-select .active {
+    border-color: rgba(213,184,255, 0.83);
+    font-weight: 400;
   }
 
   @keyframes typingAnimation {

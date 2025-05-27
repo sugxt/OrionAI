@@ -1,14 +1,41 @@
 <script>
   // your script goes here
+  import { DeleteConfig } from "../../wailsjs/go/api/App";
+  let toggleSettings = false;
+  async function resetConfig() {
+    const res = await DeleteConfig();
+    if (res == "deleted") {
+      window.runtime.LogPrint(res);
+      window.runtime.WindowReload();
+      toggleSettings != toggleSettings;
+    }
+  }
 </script>
 
-<div>
+<div class="top-bar">
   <div class="tools">
     <a href="#">File</a>
     <a href="#">Edit</a>
     <a href="#">View</a>
     <a href="#">Settings</a>
   </div>
+  <div class="settings">
+    <button
+      on:click={() => {
+        toggleSettings = !toggleSettings;
+      }}>Settings</button
+    >
+  </div>
+  {#if toggleSettings}
+    <div class="settings-box">
+      <h1>Settings</h1>
+      <button
+        on:click={() => {
+          resetConfig();
+        }}>Reset Config</button
+      >
+    </div>
+  {/if}
 </div>
 
 <!-- markup (zero or more items) goes here -->
@@ -16,6 +43,10 @@
 <style>
   /* your styles go here */
   .tools {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
     margin-top: 10px;
     margin-left: 8px;
     margin-right: 8px;
@@ -29,13 +60,37 @@
     padding-left: 25px;
     padding-right: 25px;
     border-radius: 40px;
-    width:max-content;
-    background: linear-gradient(200deg, #5395b9 0%, #96457f 100%);
+    width: max-content;
   }
   .tools a {
     font-size: 14px;
     text-decoration: none;
     color: #ffffff;
     font-weight: 400;
+  }
+  .settings {
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 10;
+  }
+  .settings button {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+  }
+  .settings-box {
+    background-color: rgba(255, 255, 255, 0.185);
+    width: 200px;
+    position: fixed;
+    top: 10px;
+    z-index: 0;
+    right: 10px;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
   }
 </style>
