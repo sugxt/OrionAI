@@ -22,7 +22,7 @@ type OllamaResponse struct {
 }
 
 var conversationHistory []string
-
+var lastMode string // track last mode to detect mode change
 var modeChange bool
 
 func QueryOllama(prompt string, isExec bool) (string, error) {
@@ -69,6 +69,18 @@ func IsOllamaRunning() bool {
 }
 
 func (a *App) AskOllama(prompt string, mode string) (string, error) {
+	if lastMode != "" && lastMode != mode {
+		modeChange = true
+		conversationHistory = []string{}
+	} else {
+		modeChange = false
+	}
+	lastMode = mode
+
+	if modeChange {
+		runtime.LogPrint(a.ctx, "mode changed - conversation history cleared")
+	}
+
 	fullPrompt := strings.Join(GetPastConversation(conversationHistory), "\n") + "\n" + a.PrePrompt(mode) + "\nUser: " + "new prompt = " + prompt + "\nAssistant:"
 	runtime.LogPrintf(a.ctx, fullPrompt)
 	response, err := QueryOllama(fullPrompt, false)
@@ -80,23 +92,23 @@ func (a *App) AskOllama(prompt string, mode string) (string, error) {
 
 func (a *App) PrePrompt(activity string) string {
 	userDetails := a.GetUserDetails()
-	var initialPrompt = "This is pre-prompt to structure your responses,DO NOT mention any of the contexts the actual prompt starts from the 'new prompt =' part, ONLY  reply to the last prompt. The past responses of the user will be provided so keep it in context. Keep the answers fairly short. DO NOT mention anything about the chat history that is provided before the prompt \n These are the user details, you can greet the user to make it more personalized: " + userDetails
+	var initialPrompt = "This is pre-prompt to structure your responses, DO NOT mention any of the contexts; the actual prompt starts from the 'new prompt =' part. ONLY reply to the last prompt. The past responses of the user will be provided so keep it in context. Keep the answers fairly short. DO NOT mention anything about the chat history that is provided before the prompt.\nThese are the user details, you can greet the user to make it more personalized: " + userDetails
 	switch activity {
 	case "code":
-		return initialPrompt + `You are a coding assistant. Respond with code when asked and explain briefly.`
+		return initialPrompt + ` You are a coding assistant. Respond with code when asked and explain briefly.`
 	case "alarm":
-		return initialPrompt + `You are a time management assistant. Respond with commands to set alarms or reminders.`
+		return initialPrompt + ` You are a time management assistant. Respond with commands to set alarms or reminders.`
 	case "tasks":
-		return initialPrompt + `You are a task execution assistaant. I will provide a list of tasks and you are ONLY to return the keyword of what category the task execution lies in. Here are the categories = \n "code","browser","alarm","reboot","shutdown"`
+		return initialPrompt + ` You are a task execution assistant. I will provide a list of tasks and you are ONLY to return the keyword of what category the task execution lies in. Here are the categories: "code", "browser", "alarm", "reboot", "shutdown".`
 	case "general":
 		fallthrough
 	default:
-		return initialPrompt + `You are a helpful desktop assistant. Answer questions in a short and sweet manner`
+		return initialPrompt + ` You are a helpful desktop assistant. Answer questions in a short and sweet manner.`
 	}
 }
 
 func GetPastConversation(pastConvo []string) []string {
-	//TODO: Check if there has been a change in 'activity', if so then just reset the past conversation so the bot doesnt tweak tf out
+	// Keep only the last 10 messages to avoid flooding the prompt
 	if len(pastConvo) > 10 {
 		return pastConvo[len(pastConvo)-10:]
 	}
@@ -104,11 +116,18 @@ func GetPastConversation(pastConvo []string) []string {
 }
 
 func TaskExecution(taskType string) (isExecuted bool) {
-	//TODO: Execute System Tasks Based on The Response of the Bot
-	fmt.Sprintln(taskType)
+	// You could add actual dispatch logic here depending on the task type
+	fmt.Println("Executing task type:", taskType)
 	return false
 }
 
 func SaveLastInteraction(prompt, response string) {
 	conversationHistory = append(conversationHistory, "User: "+prompt, "Assistant: "+response)
+}
+
+func ResetConversation() []string {
+	conversationHistory = []string{}
+	lastMode = ""
+	modeChange = false
+	return conversationHistory
 }

@@ -6,7 +6,11 @@ export function AskOllama(arg1:string,arg2:string):Promise<string>;
 
 export function CheckDependencies():Promise<boolean>;
 
+export function CreateTempDir():Promise<string>;
+
 export function DeleteConfig():Promise<string>;
+
+export function GetFromClipBoard():Promise<boolean>;
 
 export function GetUserDetails():Promise<string>;
 
