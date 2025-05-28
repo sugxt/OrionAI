@@ -10,8 +10,16 @@ export function CheckDependencies() {
   return window['go']['api']['App']['CheckDependencies']();
 }
 
+export function CreateTempDir() {
+  return window['go']['api']['App']['CreateTempDir']();
+}
+
 export function DeleteConfig() {
   return window['go']['api']['App']['DeleteConfig']();
+}
+
+export function GetFromClipBoard() {
+  return window['go']['api']['App']['GetFromClipBoard']();
 }
 
 export function GetUserDetails() {
