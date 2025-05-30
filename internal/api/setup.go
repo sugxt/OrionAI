@@ -3,46 +3,56 @@ package api
 import (
 	"fmt"
 	"os/exec"
-	goruntime "runtime" // Alias the Go runtime
+	goruntime "runtime"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime" // Wails runtime
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func CheckFunction() {
-	fmt.Println("This is working")
-}
-
 func (a *App) CheckDependencies() (isReady bool) {
-	cmd := exec.Command("ollama", "--version")
-	err := cmd.Run()
+	path, err := exec.LookPath("ollama")
 	if err != nil {
-		fmt.Println("Ollama is not installed. Attempting installation...")
-		InstallOllama()
+		fmt.Println("Ollama not found, starting async installation...")
+		go a.InstallOllamaAndPhi3()
 		return false
 	}
-	runtime.LogPrintf(a.ctx, "Ollama is Already Installed!")
+	runtime.LogPrintf(a.ctx, "Ollama found at: %s", path)
 	return true
 }
 
-func InstallOllama() {
-	var cmd *exec.Cmd
+func (a *App) InstallOllamaAndPhi3() {
+	var installCmd *exec.Cmd
 
 	switch goruntime.GOOS {
 	case "windows":
-		cmd = exec.Command("powershell", "iwr https://ollama.com/download/OllamaSetup.exe -OutFile OllamaSetup.exe; Start-Process .\\OllamaSetup.exe -Wait")
-	case "linux":
-		cmd = exec.Command("sh", "-c", "curl -fsSL https://ollama.com/install.sh | sh")
-	case "darwin":
-		cmd = exec.Command("sh", "-c", "curl -fsSL https://ollama.com/install.sh | sh")
+		installCmd = exec.Command("powershell", "iwr https://ollama.com/download/OllamaSetup.exe -OutFile OllamaSetup.exe; Start-Process .\\OllamaSetup.exe -Wait")
+	case "linux", "darwin":
+		installCmd = exec.Command("sh", "-c", "curl -fsSL https://ollama.com/install.sh | sh")
 	default:
-		fmt.Println("Unsupported OS")
+		runtime.LogError(a.ctx, "Unsupported OS for Ollama installation.")
+		runtime.EventsEmit(a.ctx, "ollama:install_failed", "Unsupported OS")
 		return
 	}
 
-	err := cmd.Run()
+	out, err := installCmd.CombinedOutput()
 	if err != nil {
-		fmt.Printf("Failed to install Ollama: %v\n", err)
-	} else {
-		fmt.Println("Ollama installation attempted.")
+		runtime.LogError(a.ctx, fmt.Sprintf(" Ollama install failed: %v\nOutput: %s", err, string(out)))
+		runtime.EventsEmit(a.ctx, "ollama:install_failed", string(out))
+		return
 	}
+
+	runtime.LogPrintf(a.ctx, "Ollama installed. Output: %s", string(out))
+	runtime.EventsEmit(a.ctx, "ollama:installed", "Ollama installed successfully.")
+
+	runtime.LogPrintf(a.ctx, "Pulling phi3 model...")
+	pullCmd := exec.Command("ollama", "pull", "phi3")
+	pullOut, pullErr := pullCmd.CombinedOutput()
+
+	if pullErr != nil {
+		runtime.LogError(a.ctx, fmt.Sprintf("Failed to pull phi3: %v\nOutput: %s", pullErr, string(pullOut)))
+		runtime.EventsEmit(a.ctx, "phi3:pull_failed", string(pullOut))
+		return
+	}
+
+	runtime.LogPrintf(a.ctx, "phi3 pulled successfully. Output: %s", string(pullOut))
+	runtime.EventsEmit(a.ctx, "phi3:installed", "Phi3 model pulled and ready.")
 }

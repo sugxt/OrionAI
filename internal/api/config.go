@@ -21,7 +21,12 @@ func (a *App) Startup(ctx context.Context) {
 		runtime.LogError(a.ctx, "Dependencies Installed")
 	}
 
-	err := a.StartOllamaModel()
+	err := a.StartClipBoard()
+	if err != nil {
+		runtime.LogError(a.ctx, "It is not working")
+	}
+
+	err = a.StartOllamaModel()
 	if err != nil {
 		runtime.LogErrorf(a.ctx, "Failed to start Ollama:")
 	}

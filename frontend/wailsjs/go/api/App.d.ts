@@ -10,9 +10,13 @@ export function CreateTempDir():Promise<string>;
 
 export function DeleteConfig():Promise<string>;
 
-export function GetFromClipBoard():Promise<boolean>;
+export function EnchancementQuery(arg1:string,arg2:string):Promise<void>;
+
+export function GetClipBoardHistory():Promise<Array<string>>;
 
 export function GetUserDetails():Promise<string>;
+
+export function InstallOllamaAndPhi3():Promise<void>;
 
 export function LoadConfig():Promise<string>;
 
@@ -21,5 +25,7 @@ export function PrePrompt(arg1:string):Promise<string>;
 export function SaveConfig(arg1:string):Promise<void>;
 
 export function Shutdown(arg1:context.Context):Promise<void>;
+
+export function StartClipBoard():Promise<void>;
 
 export function StartOllamaModel():Promise<void>;
