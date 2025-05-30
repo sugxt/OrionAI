@@ -35,6 +35,7 @@ func (a *App) StartClipBoard() error {
 		clipboardHistory = append(clipboardHistory, string(data))
 		runtime.LogPrint(a.ctx, clipboardHistory[0])
 		//TODO: Make changes in the frontend if the clipboard history changes
+		runtime.EventsEmit(a.ctx, "clipboardHistoryUpdated", clipboardHistory)
 
 	}
 
