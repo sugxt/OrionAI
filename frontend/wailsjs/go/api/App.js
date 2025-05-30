@@ -18,12 +18,20 @@ export function DeleteConfig() {
   return window['go']['api']['App']['DeleteConfig']();
 }
 
-export function GetFromClipBoard() {
-  return window['go']['api']['App']['GetFromClipBoard']();
+export function EnchancementQuery(arg1, arg2) {
+  return window['go']['api']['App']['EnchancementQuery'](arg1, arg2);
+}
+
+export function GetClipBoardHistory() {
+  return window['go']['api']['App']['GetClipBoardHistory']();
 }
 
 export function GetUserDetails() {
   return window['go']['api']['App']['GetUserDetails']();
+}
+
+export function InstallOllamaAndPhi3() {
+  return window['go']['api']['App']['InstallOllamaAndPhi3']();
 }
 
 export function LoadConfig() {
@@ -40,6 +48,10 @@ export function SaveConfig(arg1) {
 
 export function Shutdown(arg1) {
   return window['go']['api']['App']['Shutdown'](arg1);
+}
+
+export function StartClipBoard() {
+  return window['go']['api']['App']['StartClipBoard']();
 }
 
 export function StartOllamaModel() {
