@@ -10,6 +10,10 @@ export function CheckDependencies() {
   return window['go']['api']['App']['CheckDependencies']();
 }
 
+export function ClearHistory(arg1) {
+  return window['go']['api']['App']['ClearHistory'](arg1);
+}
+
 export function CreateTempDir() {
   return window['go']['api']['App']['CreateTempDir']();
 }

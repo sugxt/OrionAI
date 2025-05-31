@@ -1,6 +1,6 @@
 <script>
   // your script goes here
-  import { DeleteConfig } from "../../wailsjs/go/api/App";
+  import { DeleteConfig, ClearHistory } from "../../wailsjs/go/api/App";
   let toggleSettings = false;
   async function resetConfig() {
     const res = await DeleteConfig();
@@ -31,9 +31,14 @@
       <h1>Settings</h1>
       <button
         on:click={() => {
-          resetConfig();
-        }}>Reset Config</button
+          ClearHistory("");
+        }}>Clear Response History</button
       >
+      <button
+        on:click={() => {
+          ClearHistory("clipboard");
+        }}
+      ></button>
     </div>
   {/if}
 </div>
