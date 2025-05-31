@@ -12,8 +12,6 @@ export function DeleteConfig():Promise<string>;
 
 export function EnchancementQuery(arg1:string,arg2:string):Promise<void>;
 
-export function GetClipBoardHistory():Promise<Array<string>>;
-
 export function GetUserDetails():Promise<string>;
 
 export function InstallOllamaAndPhi3():Promise<void>;
