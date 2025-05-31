@@ -22,10 +22,6 @@ export function EnchancementQuery(arg1, arg2) {
   return window['go']['api']['App']['EnchancementQuery'](arg1, arg2);
 }
 
-export function GetClipBoardHistory() {
-  return window['go']['api']['App']['GetClipBoardHistory']();
-}
-
 export function GetUserDetails() {
   return window['go']['api']['App']['GetUserDetails']();
 }
