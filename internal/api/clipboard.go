@@ -53,7 +53,7 @@ func (a *App) EnchancementQuery(clip string, mode string) error {
 	//TODO: Add better handling of different cases and add more cases
 	switch mode {
 	case "sum":
-		res, err := QueryOllama("Expand the provided text to have a little more content in it and also keep it very short and simple, do not expand more than 3-4 sentences :"+clip, false)
+		res, err := QueryOllama("Expand the provided text to have a little more content in it and also keep it VERY VERY short and simple,DO NOT add more than 2-3 sentences:"+clip, false)
 		if err != nil {
 			return err
 		}
@@ -68,4 +68,15 @@ func (a *App) EnchancementQuery(clip string, mode string) error {
 	}
 	return nil
 
+}
+
+func (a *App) ClearHistory(list string) {
+	if list == "clipboard" {
+		clipboardHistory = []string{}
+		runtime.EventsEmit(a.ctx, "clipboardHistoryUpdated", clipboardHistory)
+
+	} else {
+		responseHistory = []string{}
+		runtime.EventsEmit(a.ctx, "responseHistoryUpdated", responseHistory)
+	}
 }
