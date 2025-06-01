@@ -20,9 +20,13 @@ export function InstallOllamaAndPhi3():Promise<void>;
 
 export function LoadConfig():Promise<string>;
 
+export function ModeQuery(arg1:string):Promise<string>;
+
 export function PrePrompt(arg1:string):Promise<string>;
 
 export function SaveConfig(arg1:string):Promise<void>;
+
+export function SetMode(arg1:string):Promise<void>;
 
 export function Shutdown(arg1:context.Context):Promise<void>;
 
