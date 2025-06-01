@@ -59,7 +59,6 @@ func (a *App) EnchancementQuery(clip string, mode string) error {
 		}
 		responseHistory = append(responseHistory, string(res))
 		clipboard.Write(clipboard.FmtText, []byte(res))
-		//TODO: Implement this in the frontend and add a different panel for responses
 		runtime.EventsEmit(a.ctx, "responseHistoryUpdated", responseHistory)
 		runtime.LogPrint(a.ctx, "Copied")
 		isAIResponse = true
