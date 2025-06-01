@@ -1,27 +1,28 @@
 <script lang="ts">
   import TopBar from "./components/TopBar.svelte";
   import { clipboardHistory, responseHistory } from "./libs/clipboard";
-
-  var currentMode:string = "summarize"
-  const setMode = (mode: string) => {
-    //Making a function incase there is more to handle here
-    currentMode = mode;
-  };
+  import { SetMode } from "../wailsjs/go/api/App";
 </script>
 
 <main>
   <TopBar />
+  <!-- TODO: Fix the random gap that appears between the text and the button group -->
   <div class="history-main">
     <h1>Clipr History</h1>
     <div class="mode-select">
       <h2>Select Modes</h2>
       <div class="button-list">
-        <button on:click={()=> {
-          setMode("sum")
-        }}>Summarize</button>
-        <button on:click={()=> {
-          setMode("expand")
-        }}>Expand</button>
+        <!-- TODO: Add isActive State and add necessary adjustments based on the active mode -->
+        <button
+          on:click={() => {
+            SetMode("sum");
+          }}>Summarize</button
+        >
+        <button
+          on:click={() => {
+            SetMode("expand");
+          }}>Expand</button
+        >
       </div>
     </div>
     <ul class="clip-list">
@@ -89,7 +90,7 @@
 
   .mode-select h2 {
     font-weight: 500;
-    padding:0;
+    padding: 0;
     margin: 0;
     font-size: 16px;
   }
@@ -101,7 +102,7 @@
     gap: 10px;
   }
 
-  .button-list button{
+  .button-list button {
     width: auto;
     padding: 10px;
     font-size: 14px;

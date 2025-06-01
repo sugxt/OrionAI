@@ -38,12 +38,20 @@ export function LoadConfig() {
   return window['go']['api']['App']['LoadConfig']();
 }
 
+export function ModeQuery(arg1) {
+  return window['go']['api']['App']['ModeQuery'](arg1);
+}
+
 export function PrePrompt(arg1) {
   return window['go']['api']['App']['PrePrompt'](arg1);
 }
 
 export function SaveConfig(arg1) {
   return window['go']['api']['App']['SaveConfig'](arg1);
+}
+
+export function SetMode(arg1) {
+  return window['go']['api']['App']['SetMode'](arg1);
 }
 
 export function Shutdown(arg1) {
