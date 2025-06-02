@@ -2,127 +2,129 @@
   import TopBar from "./components/TopBar.svelte";
   import { clipboardHistory, responseHistory } from "./libs/clipboard";
   import { SetMode } from "../wailsjs/go/api/App";
+
+  let currentTab: string = "clipboard";
+  let activeMode: string = "sum"; // Track active mode
+
+  let modes = [
+    {
+      name: "sum",
+      label: "Summarize",
+    },
+    {
+      name: "expand",
+      label: "Expand",
+    },
+    {
+      name: "para",
+      label: "Paraphrase",
+    },
+  ];
+
+  const handleModeChange = (mode: string) => {
+    activeMode = mode;
+    SetMode(mode);
+  };
 </script>
 
 <main>
   <TopBar />
-  <!-- TODO: Fix the random gap that appears between the text and the button group -->
-  <div class="history-main">
-    <h1>Clipr History</h1>
-    <div class="mode-select">
-      <h2>Select Modes</h2>
-      <div class="button-list">
-        <!-- TODO: Add isActive State and add necessary adjustments based on the active mode -->
-        <button
-          on:click={() => {
-            SetMode("sum");
-          }}>Summarize</button
-        >
-        <button
-          on:click={() => {
-            SetMode("expand");
-          }}>Expand</button
-        >
+  <div class="container">
+    <div class="header">
+      <h1>Clipr History</h1>
+      <p class="subtitle">Enhance your clipboard with AI-powered modes</p>
+    </div>
+    <!-- Mode Selection -->
+    <div class="mode-section">
+      <h2>Processing Mode</h2>
+      <div class="mode-buttons">
+        {#each modes as mode}
+          <button
+            class="mode-btn {activeMode === mode.name ? 'active' : ''}"
+            on:click={() => handleModeChange(mode.name)}
+          >
+            <span>{mode.label}</span>
+          </button>
+        {/each}
       </div>
     </div>
-    <ul class="clip-list">
-      {#each $clipboardHistory as clip}
-        <li class="clip-item">{clip}</li>
-      {/each}
-    </ul>
-    <ul class="response-list">
-      {#each $responseHistory as res}
-        <li class="response-item">
-          {res}
-        </li>
-      {/each}
-    </ul>
+
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <button
+        class="tab-btn {currentTab === 'clipboard' ? 'active' : ''}"
+        on:click={() => (currentTab = "clipboard")}
+      >
+        Clipboard History
+        <span class="tab-count">{$clipboardHistory.length}</span>
+      </button>
+      <button
+        class="tab-btn {currentTab === 'responses' ? 'active' : ''}"
+        on:click={() => (currentTab = "responses")}
+      >
+        AI Responses
+        <span class="tab-count">{$responseHistory.length}</span>
+      </button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      {#if currentTab === "clipboard"}
+        <div class="grid-container">
+          {#each $clipboardHistory as clip, index}
+            <div class="card clipboard-card">
+              <div class="card-header">
+                <span class="card-number">#{index + 1}</span>
+                <div class="card-actions">
+                  <button class="action-btn" title="Copy">📋</button>
+                  <button class="action-btn" title="Delete">🗑️</button>
+                </div>
+              </div>
+              <div class="card-content">
+                {clip}
+              </div>
+              <div class="card-footer"></div>
+            </div>
+          {/each}
+
+          {#if $clipboardHistory.length === 0}
+            <div class="empty-state">
+              <div class="empty-icon">📋</div>
+              <h3>No clipboard history yet</h3>
+              <p>Start copying text to see it appear here</p>
+            </div>
+          {/if}
+        </div>
+      {/if}
+
+      {#if currentTab === "responses"}
+        <div class="grid-container">
+          {#each $responseHistory as response, index}
+            <div class="card response-card">
+              <div class="card-header">
+                <span class="card-number">#{index + 1}</span>
+                <div class="card-actions">
+                  <button class="action-btn" title="Copy">📋</button>
+                  <button class="action-btn" title="Delete">🗑️</button>
+                </div>
+              </div>
+              <div class="card-content">
+                {response}
+              </div>
+            </div>
+          {/each}
+
+          {#if $responseHistory.length === 0}
+            <div class="empty-state">
+              <div class="empty-icon">🤖</div>
+              <h3>No AI responses yet</h3>
+              <p>
+                Process some clipboard items to see AI-enhanced content here
+              </p>
+            </div>
+          {/if}
+        </div>
+      {/if}
+    </div>
   </div>
 </main>
-
-<style>
-  .history-main {
-    margin-top: 35px;
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: start;
-  }
-  .history-main h1 {
-    font-weight: 600;
-    font-size: x-large;
-    margin-left: 20px;
-  }
-  .clip-list {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    gap: 10px;
-    width: 100%;
-  }
-
-  .clip-item {
-    list-style-type: none;
-    text-decoration: none;
-    background-color: rgba(255, 255, 255, 0.411);
-    padding: 20px;
-    width: 25%;
-    border-radius: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.452);
-    transition: cubic-bezier();
-    transition-duration: 200ms;
-  }
-  .clip-item:hover {
-    scale: 1.03;
-  }
-
-  .mode-select {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    margin-left: 20px;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    gap: 10px;
-  }
-
-  .mode-select h2 {
-    font-weight: 500;
-    padding: 0;
-    margin: 0;
-    font-size: 16px;
-  }
-
-  .button-list {
-    display: flex;
-    flex-direction: row;
-    align-items: start;
-    gap: 10px;
-  }
-
-  .button-list button {
-    width: auto;
-    padding: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 12px;
-    border: none;
-    background-color: white;
-  }
-
-  .response-list {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    gap: 10px;
-  }
-  .response-item {
-    list-style-type: none;
-    padding: 20px;
-    border-radius: 10px;
-    width: 25%;
-    background-color: rgba(255, 255, 255, 0.411);
-  }
-</style>
