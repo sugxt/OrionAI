@@ -87,7 +87,7 @@ func (a *App) ModeQuery(mode string) string {
 	switch mode {
 	case "sum":
 		// Structure the prompt so the bot doesn't end up increasing the text rather than summarizing it
-		return "Summarize the given text and modify it a little bit, don't go overboard and keep it a fair length, IT MUST BE SHORTER THAN THE PROVIDED TEXT: "
+		return "You are a bot that will simply just summarize the text provided into a shorter and compact version, the actual prompt is here: "
 	case "expand":
 		//Add More Precise Prompting To Generate the Ideal Response
 		return "Expand the provided text to have a little more content in it and also keep it VERY VERY short and simple,DO NOT add more than 2-3 sentences and only provide clean text, don't refer to anything else: "
