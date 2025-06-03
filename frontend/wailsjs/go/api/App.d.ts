@@ -8,8 +8,6 @@ export function CheckDependencies():Promise<boolean>;
 
 export function ClearHistory(arg1:string):Promise<void>;
 
-export function CreateTempDir():Promise<string>;
-
 export function DeleteConfig():Promise<string>;
 
 export function EnchancementQuery(arg1:string,arg2:string):Promise<void>;
