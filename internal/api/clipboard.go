@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"os"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"golang.design/x/clipboard"
@@ -12,17 +11,6 @@ var clipboardHistory []string
 var responseHistory []string
 var isAIResponse bool = false
 var currentMode string
-
-func (a *App) CreateTempDir() (string, error) {
-
-	tempdir, err := os.MkdirTemp("", "clipboard_dir")
-	if err != nil {
-		return "", err
-	}
-	runtime.LogPrint(a.ctx, tempdir)
-
-	return tempdir, nil
-}
 
 func (a *App) StartClipBoard() error {
 	err := clipboard.Init()
@@ -77,10 +65,9 @@ func (a *App) ClearHistory(list string) {
 	}
 }
 
-func (a *App) SetMode(mode string) error {
+func (a *App) SetMode(mode string) {
 	currentMode = mode
 	runtime.LogPrintf(a.ctx, "Mode Changed")
-	return nil
 }
 
 func (a *App) ModeQuery(mode string) string {

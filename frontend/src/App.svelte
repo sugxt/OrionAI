@@ -3,6 +3,7 @@
   import { clipboardHistory, responseHistory } from "./libs/clipboard";
   import { SetMode } from "../wailsjs/go/api/App";
 
+
   let currentTab: string = "clipboard";
   let activeMode: string = "sum"; // Track active mode
 
@@ -31,7 +32,7 @@
   <TopBar />
   <div class="container">
     <div class="header">
-      <h1>Clipr History</h1>
+      <img src="../src/assets/clipr logo.png" width="300px" alt="">
       <p class="subtitle">Enhance your clipboard with AI-powered modes</p>
     </div>
     <!-- Mode Selection -->

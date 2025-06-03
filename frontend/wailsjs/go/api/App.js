@@ -14,10 +14,6 @@ export function ClearHistory(arg1) {
   return window['go']['api']['App']['ClearHistory'](arg1);
 }
 
-export function CreateTempDir() {
-  return window['go']['api']['App']['CreateTempDir']();
-}
-
 export function DeleteConfig() {
   return window['go']['api']['App']['DeleteConfig']();
 }
