@@ -1,4 +1,4 @@
-# OrionAI — AI Desktop Assistant & Chatbot
+# Clipr — Clipboard Assistant
 
 Clipr is a cross-platform clipboard assistant and chatbot powered by **Go**, **Svelte**, and **Wails**. It integrates the lightweight **Phi-3 Mini** model to provide fast, local AI responses and assistant functionalities.
 
